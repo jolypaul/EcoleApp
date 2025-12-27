@@ -91,7 +91,7 @@ namespace EcoleApp.Models.DAL
                     Id = "ADMIN-001",
                     NomComplet = "Administrateur Principal",
                     Email = "admin@asp.com",
-                    MotDePasse = PasswordHelper.HashPassword("admin@237"),
+                    MotDePasseHash = PasswordHelper.HashPassword("admin@237"),
                     RoleId = 1,
                     Poste = "Administrateur Système"
                 }

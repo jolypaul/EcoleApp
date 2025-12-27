@@ -17,7 +17,6 @@
     <Folder Include="Controllers\RapportEtStatistique\" />
     <Folder Include="Controllers\SeanceDeCours\" />
     <Folder Include="Models\Enums\" />
-    <Folder Include="Models\ViewModels\" />
     <Folder Include="Views\AdministrationEtAudit\" />
     <Folder Include="Views\SeanceDeCours\" />
     <Folder Include="Views\RapportEtStatistique\" />
