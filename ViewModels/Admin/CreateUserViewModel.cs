@@ -1,7 +1,7 @@
 ﻿using EcoleApp.Models.Entity.Auth;
 using System.ComponentModel.DataAnnotations;
 
-namespace EcoleApp.Models.ViewModels
+namespace EcoleApp.ViewModels.Admin
 {
     public class CreateUserViewModel
     {

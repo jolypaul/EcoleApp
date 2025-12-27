@@ -7,20 +7,39 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\AdministrationEtAudit\" />
-    <Folder Include="Controllers\Auth\" />
-    <Folder Include="Controllers\CahierDAppel\" />
-    <Folder Include="Controllers\CahierDeTexte\" />
-    <Folder Include="Controllers\GestionAppel\" />
-    <Folder Include="Controllers\JustificationDesHeures\" />
-    <Folder Include="Controllers\Notification\" />
-    <Folder Include="Controllers\RapportEtStatistique\" />
-    <Folder Include="Controllers\SeanceDeCours\" />
+    <Compile Remove="Controllers\CahierDAppel\**" />
+    <Compile Remove="Controllers\CahierDeTexte\**" />
+    <Compile Remove="Controllers\GestionAppel\**" />
+    <Compile Remove="Controllers\JustificationDesHeures\**" />
+    <Compile Remove="Controllers\Notification\**" />
+    <Compile Remove="Controllers\RapportEtStatistique\**" />
+    <Compile Remove="Controllers\SeanceDeCours\**" />
+    <Content Remove="Controllers\CahierDAppel\**" />
+    <Content Remove="Controllers\CahierDeTexte\**" />
+    <Content Remove="Controllers\GestionAppel\**" />
+    <Content Remove="Controllers\JustificationDesHeures\**" />
+    <Content Remove="Controllers\Notification\**" />
+    <Content Remove="Controllers\RapportEtStatistique\**" />
+    <Content Remove="Controllers\SeanceDeCours\**" />
+    <EmbeddedResource Remove="Controllers\CahierDAppel\**" />
+    <EmbeddedResource Remove="Controllers\CahierDeTexte\**" />
+    <EmbeddedResource Remove="Controllers\GestionAppel\**" />
+    <EmbeddedResource Remove="Controllers\JustificationDesHeures\**" />
+    <EmbeddedResource Remove="Controllers\Notification\**" />
+    <EmbeddedResource Remove="Controllers\RapportEtStatistique\**" />
+    <EmbeddedResource Remove="Controllers\SeanceDeCours\**" />
+    <None Remove="Controllers\CahierDAppel\**" />
+    <None Remove="Controllers\CahierDeTexte\**" />
+    <None Remove="Controllers\GestionAppel\**" />
+    <None Remove="Controllers\JustificationDesHeures\**" />
+    <None Remove="Controllers\Notification\**" />
+    <None Remove="Controllers\RapportEtStatistique\**" />
+    <None Remove="Controllers\SeanceDeCours\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\Enums\" />
-    <Folder Include="Views\AdministrationEtAudit\" />
     <Folder Include="Views\SeanceDeCours\" />
-    <Folder Include="Views\RapportEtStatistique\" />
-    <Folder Include="Views\Notification\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
@@ -31,6 +50,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+    <PackageReference Include="QuestPDF" Version="2025.12.1" />
   </ItemGroup>
 
 </Project>

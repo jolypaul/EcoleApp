@@ -6,7 +6,7 @@ namespace EcoleApp.Models.Entity.AdministrationEtAudit
     {
         public int Id { get; set; }
 
-        public int UtilisateurId { get; set; }
+        public string UtilisateurId { get; set; } = string.Empty;
         public Utilisateur? Utilisateur { get; set; }
 
         public string Action { get; set; } = string.Empty;
