@@ -6,7 +6,7 @@ namespace EcoleApp.Models.Entity.Notification
     {
         public int Id { get; set; }
 
-        public int UtilisateurId { get; set; }
+        public string UtilisateurId { get; set; }
         public Utilisateur? Utilisateur { get; set; }
 
         public string Message { get; set; } = string.Empty;

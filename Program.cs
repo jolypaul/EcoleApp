@@ -1,7 +1,9 @@
 using EcoleApp.Models.DAL;
 using EcoleApp.Services;
-using Microsoft.EntityFrameworkCore;
+using EcoleApp.Services.Implementations;
+using EcoleApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<ISeanceService, SeanceService>();
+builder.Services.AddScoped<IAppelService, AppelService>();
+
 
 
 

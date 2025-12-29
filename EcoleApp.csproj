@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Enums\" />
     <Folder Include="Views\SeanceDeCours\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\uploads\" />

@@ -6,7 +6,8 @@ namespace EcoleApp.Models.Entity.JustificationDesHeures
     {
         public int Id { get; set; }
 
-        public int EtudiantId { get; set; }
+        public string EtudiantId { get; set; } = string.Empty;
+
         public Etudiant? Etudiant { get; set; }
 
         public string FichierUrl { get; set; } = string.Empty;

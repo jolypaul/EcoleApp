@@ -11,5 +11,6 @@
 
         public int RoleId { get; set; }
         public Role? Role { get; set; }
+        public string IdentityUserId { get; set; } = string.Empty;
     }
 }
