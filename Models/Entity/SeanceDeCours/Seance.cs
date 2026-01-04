@@ -12,6 +12,7 @@ namespace EcoleApp.Models.Entity.SeanceDeCours
 
         public int GroupeId { get; set; }
         public Groupe Groupe { get; set; } = null!;
+        public bool EstValidee { get; set; } = false;
 
         public DateTime Date { get; set; }
         public string Salle { get; set; } = string.Empty;

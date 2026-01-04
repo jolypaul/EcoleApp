@@ -1,0 +1,57 @@
+﻿@model IEnumerable<EcoleApp.Models.Entity.SeanceDeCours.Seance>
+@using EcoleApp.Models.Enums
+
+
+@{
+    ViewData["Title"] = "Mes séances";
+}
+
+<h2 class="mb-3">Séances de cours</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    ➕ Nouvelle séance
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Date</th>
+            <th>Cours</th>
+            <th>Groupe</th>
+            <th>Salle</th>
+            <th>État</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@s.Cours?.Nom</td>
+                <td>@s.Groupe?.Nom</td>
+                <td>@s.Salle</td>
+                <td>
+                    <span class="badge @(s.Etat == EtatSeance.Validee ? "bg-success" : "bg-warning")">
+                        @s.Etat
+                    </span>
+                </td>
+                <td>
+                    @if (s.Etat == EtatSeance.Brouillon)
+                    {
+                        <form asp-action="Valider" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@s.Id" />
+                            <button class="btn btn-sm btn-success">
+                                 Valider
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Verrouillée</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

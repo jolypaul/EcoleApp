@@ -1,0 +1,31 @@
+﻿@model IEnumerable<EcoleApp.Models.Entity.GestionAppel.LigneAppel>
+
+<h2>Absences & retards</h2>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Étudiant</th>
+            <th>Groupe</th>
+            <th>Date</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var l in Model)
+        {
+            <tr>
+                <td>@l.Etudiant.NomComplet</td>
+                <td>@l.Appel.Seance.Groupe.Nom</td>
+                <td>@l.Appel.Seance.Date.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <span class="badge bg-danger">@l.Statut</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-outline-primary">
+     Exporter (PDF / Excel)
+</a>

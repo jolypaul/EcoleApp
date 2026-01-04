@@ -1,18 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using EcoleApp.Models.Entity.AdministrationEtAudit;
+﻿using EcoleApp.Models.Entity.AdministrationEtAudit;
 using EcoleApp.Models.Entity.Auth;
+using EcoleApp.Models.Entity.GestionAppel;
 using EcoleApp.Models.Entity.JustificationDesHeures;
 using EcoleApp.Models.Entity.Notification;
 using EcoleApp.Models.Entity.RapportEtStatistique;
 using EcoleApp.Models.Entity.SeanceDeCours;
 using EcoleApp.Utilitaires;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcoleApp.Models.DAL
 {
     public class ApplicationDbContext : DbContext
     {
-        // Constructeur
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -23,16 +22,27 @@ namespace EcoleApp.Models.DAL
         // ======================
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Etudiant> Etudiants { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Enseignant> Enseignants { get; set; }
+        public DbSet<Etudiant> Etudiants { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         // ======================
-        // COURS & GROUPES
+        // COURS / GROUPES / SÉANCES
         // ======================
         public DbSet<Cours> Cours { get; set; }
         public DbSet<Groupe> Groupes { get; set; }
         public DbSet<Seance> Seances { get; set; }
+
+        // ======================
+        // PRISE D’APPEL
+        // ======================
+        public DbSet<Appel> Appels { get; set; }
+        public DbSet<LigneAppel> LignesAppel { get; set; }
+
+        // ======================
+        // CAHIER DE TEXTE & JUSTIFICATIFS
+        // ======================
         public DbSet<CahierDeTexte> CahiersDeTexte { get; set; }
         public DbSet<Justificatif> Justificatifs { get; set; }
 
@@ -53,49 +63,75 @@ namespace EcoleApp.Models.DAL
             base.OnModelCreating(modelBuilder);
 
             // ======================
-            // Seed des rôles
+            // SEED DES RÔLES
             // ======================
             modelBuilder.Entity<Role>().HasData(
                 new Role
                 {
-                    Id = 1,
+                    Id = "1",
                     NomRole = "Admin",
                     Responsabilite = "Gestion complète du système"
                 },
                 new Role
                 {
-                    Id = 2,
+                    Id = "2",
                     NomRole = "Enseignant",
                     Responsabilite = "Gestion des séances et présences"
                 },
                 new Role
                 {
-                    Id = 3,
+                    Id = "3",
                     NomRole = "Etudiant",
                     Responsabilite = "Consultation des présences"
                 },
                 new Role
                 {
-                    Id = 4,
+                    Id = "4",
                     NomRole = "Delegue",
                     Responsabilite = "Gestion des présences de la classe"
                 }
             );
 
             // ======================
-            // Seed du compte Admin
+            // SEED ADMIN PAR DÉFAUT
             // ======================
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
                 {
                     Id = "ADMIN-001",
                     NomComplet = "Administrateur Principal",
-                    Email = "admin@asp.com",
+                    Email = "admin@237.com",
                     MotDePasseHash = PasswordHelper.HashPassword("admin@237"),
-                    RoleId = 1,
+                    RoleId = "1",
                     Poste = "Administrateur Système"
                 }
             );
+
+            modelBuilder.Entity<Groupe>()
+            .HasMany(g => g.Etudiants)
+            .WithOne(e => e.Groupe)
+            .HasForeignKey(e => e.GroupeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Utilisateur>()
+            .HasOne(u => u.Role)
+            .WithMany(r => r.Utilisateurs)
+            .HasForeignKey(u => u.RoleId);
+
+            modelBuilder.Entity<AuditLog>()
+            .HasOne(a => a.Utilisateur)
+            .WithMany()
+            .HasForeignKey(a => a.UtilisateurId);
+
+            modelBuilder.Entity<Session>()
+                .HasKey(s => s.SessionId);
+
+            modelBuilder.Entity<Session>()
+                .HasOne<EcoleApp.Models.Entity.Auth.Utilisateur>()
+                .WithMany()
+                .HasForeignKey(s => s.UtilisateurId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

@@ -3,75 +3,81 @@ using EcoleApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using EcoleApp.Exceptions;
+using EcoleApp.ViewModels.Seance;
 
-[Authorize(Roles = Roles.Enseignant)]
-public class SeanceController : Controller
+namespace EcoleApp.Controllers
 {
-    private readonly ISeanceService _seanceService;
 
-    public SeanceController(ISeanceService seanceService)
+    [Authorize(Roles = Roles.Enseignant)]
+    public class SeanceController : Controller
     {
-        _seanceService = seanceService;
-    }
+        private readonly ISeanceService _seanceService;
 
-    // GET
-    public async Task<IActionResult> Index()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var seances = await _seanceService.ConsulterSeancesAsync(userId);
-        return View(seances);
-    }
-
-    // GET
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // POST
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateSeanceViewModel model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
-
-        try
+        public SeanceController(ISeanceService seanceService)
         {
-            var enseignantId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            await _seanceService.CreerSeanceAsync(
-                model.CoursId,
-                model.GroupeId,
-                model.Date,
-                model.Salle,
-                model.Type,
-                enseignantId);
-
-            return RedirectToAction(nameof(Index));
+            _seanceService = seanceService;
         }
-        catch (BusinessException ex)
-        {
-            ModelState.AddModelError(string.Empty, ex.Message);
-            return View(model);
-        }
-    }
 
-    // POST
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Valider(int id)
-    {
-        try
+        // GET
+        public async Task<IActionResult> Index()
         {
-            var enseignantId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            await _seanceService.ValiderSeanceAsync(id, enseignantId);
-            return RedirectToAction(nameof(Index));
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var seances = await _seanceService.ConsulterSeancesAsync(userId);
+            return View(seances);
         }
-        catch (BusinessException ex)
+
+        // GET
+        public IActionResult Create()
         {
-            TempData["Error"] = ex.Message;
-            return RedirectToAction(nameof(Index));
+            return View();
+        }
+
+        // POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateSeanceViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var enseignantId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+                await _seanceService.CreerSeanceAsync(
+                    model.CoursId,
+                    model.GroupeId,
+                    model.Date,
+                    model.Salle,
+                    model.Type,
+                    enseignantId);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
+        }
+
+        // POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Valider(int id)
+        {
+            try
+            {
+                var enseignantId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                await _seanceService.ValiderSeanceAsync(id, enseignantId);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

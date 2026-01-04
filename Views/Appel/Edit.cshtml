@@ -1,0 +1,44 @@
+﻿@model EcoleApp.ViewModels.Appel.SaisieAppelViewModel
+@using EcoleApp.Models.Enums
+
+<h2>Prise d’appel</h2>
+
+<a asp-controller="Seance" asp-action="Index" class="btn btn-link mb-3">← Retour aux séances</a>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="AppelId" />
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Étudiant</th>
+                <th>Présence</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Presences)
+            {
+                var id = item.Key;
+                var value = item.Value;
+                <tr>
+                    <td>@(Model.StudentNames.ContainsKey(id) ? Model.StudentNames[id] : id)</td>
+                    <td>
+                        <select name="presences[@id]" class="form-select">
+                            @foreach (StatutPresence statut in Enum.GetValues(typeof(StatutPresence)))
+                            {
+                                <option value="@((int)statut)" selected="@(value == statut ? "selected" : null)">
+                                    @statut
+                                </option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">
+        Enregistrer l’appel
+    </button>
+</form>

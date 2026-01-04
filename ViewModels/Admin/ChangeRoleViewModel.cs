@@ -8,6 +8,6 @@ namespace EcoleApp.ViewModels.Admin
         public string UtilisateurId { get; set; } = string.Empty;
 
         [Required]
-        public int NouveauRoleId { get; set; }
+        public string NouveauRoleId { get; set; } = string.Empty;
     }
 }

@@ -7,6 +7,8 @@ namespace EcoleApp.Models.Entity.SeanceDeCours
         public int Id { get; set; }
         public string Nom { get; set; } = string.Empty;
 
-        public ICollection<Etudiant>? Etudiants { get; set; }
+        public ICollection<Etudiant> Etudiants { get; set; }
+            = new List<Etudiant>();
     }
+
 }

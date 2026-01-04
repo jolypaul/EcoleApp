@@ -1,11 +1,12 @@
 ﻿using EcoleApp.Models.Entity.Auth;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcoleApp.Models.Entity.AdministrationEtAudit
 {
     public class AuditLog
     {
         public int Id { get; set; }
-
+        [ForeignKey(nameof(Utilisateur))]
         public string UtilisateurId { get; set; } = string.Empty;
         public Utilisateur? Utilisateur { get; set; }
 

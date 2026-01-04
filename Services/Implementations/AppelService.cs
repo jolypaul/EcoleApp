@@ -1,7 +1,9 @@
-﻿using EcoleApp.Models.DAL;
+﻿using EcoleApp.Exceptions;
+using EcoleApp.Models.DAL;
 using EcoleApp.Models.Entity.GestionAppel;
 using EcoleApp.Models.Enums;
 using EcoleApp.Services.Interfaces;
+using EcoleApp.ViewModels.Appel;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcoleApp.Services.Implementations
@@ -15,73 +17,93 @@ namespace EcoleApp.Services.Implementations
             _context = context;
         }
 
-        public async Task<Appel> CreerAppelAsync(int seanceId, string delegueId)
+        public async Task<int> CreerAppelAsync(int seanceId, string delegueId)
         {
-            var seance = await _context.Seances
-                .Include(s => s.Groupe)
-                .ThenInclude(g => g.Etudiants)
-                .FirstOrDefaultAsync(s => s.Id == seanceId);
+            var seance = await _context.Seances.FindAsync(seanceId)
+                ?? throw new BusinessException("Séance introuvable.");
 
-            if (seance == null)
-                throw new BusinessException("Séance introuvable.");
-
-            if (seance.Etat == EtatSeance.Validee)
-                throw new BusinessException("Séance validée, appel interdit.");
-
-            if (seance.Appel != null)
-                throw new BusinessException("Appel déjà existant.");
+            if (seance.EstValidee)
+                throw new BusinessException("Séance déjà validée.");
 
             var appel = new Appel
             {
                 SeanceId = seanceId,
-                DelegueId = delegueId
+                DelegueId = delegueId,
+                DateSaisie = DateTime.UtcNow,
+                EstVerrouille = false
             };
-
-            foreach (var etudiant in seance.Groupe!.Etudiants!)
-            {
-                appel.LignesAppel.Add(new LigneAppel
-                {
-                    EtudiantId = etudiant.Id,
-                    Statut = StatutPresence.Present
-                });
-            }
 
             _context.Appels.Add(appel);
             await _context.SaveChangesAsync();
 
-            return appel;
+            return appel.Id;
         }
 
-        public async Task SaisirAppelAsync(int appelId, Dictionary<string, StatutPresence> presences)
+        public async Task<SaisieAppelViewModel> GetSaisieAppelAsync(int appelId)
         {
             var appel = await _context.Appels
                 .Include(a => a.Seance)
+                    .ThenInclude(s => s.Groupe)
+                        .ThenInclude(g => g.Etudiants)
                 .Include(a => a.LignesAppel)
-                .FirstOrDefaultAsync(a => a.Id == appelId);
+                .FirstOrDefaultAsync(a => a.Id == appelId)
+                ?? throw new BusinessException("Appel introuvable.");
 
-            if (appel == null)
-                throw new BusinessException("Appel introuvable.");
+            if (appel.EstVerrouille)
+                throw new BusinessException("Appel déjà validé.");
 
-            if (appel.EstVerrouille || appel.Seance!.Etat == EtatSeance.Validee)
-                throw new BusinessException("Appel verrouillé.");
+            var presences = new Dictionary<string, StatutPresence>();
+            var names = new Dictionary<string, string>();
 
-            foreach (var ligne in appel.LignesAppel)
+            foreach (var e in appel.Seance.Groupe.Etudiants)
             {
-                if (presences.TryGetValue(ligne.EtudiantId, out var statut))
-                {
-                    ligne.Statut = statut;
-                }
+                presences[e.Id] = StatutPresence.Present;
+                names[e.Id] = e.NomComplet;
             }
 
+            return new SaisieAppelViewModel
+            {
+                AppelId = appel.Id,
+                Presences = presences,
+                StudentNames = names
+            };
+        }
+
+        public async Task EnregistrerSaisieAsync(
+            int appelId,
+            Dictionary<string, StatutPresence> presences)
+        {
+            var appel = await _context.Appels
+                .Include(a => a.LignesAppel)
+                .FirstOrDefaultAsync(a => a.Id == appelId)
+                ?? throw new BusinessException("Appel introuvable.");
+
+            if (appel.EstVerrouille)
+                throw new BusinessException("Appel verrouillé.");
+
+            appel.LignesAppel.Clear();
+
+            foreach (var p in presences)
+            {
+                appel.LignesAppel.Add(new LigneAppel
+                {
+                    EtudiantId = p.Key,      // string ✔
+                    Statut = p.Value
+                });
+            }
+
+            appel.EstVerrouille = true;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<LigneAppel>> ConsulterAbsencesAsync(DateTime debut, DateTime fin)
+        public async Task<IEnumerable<LigneAppel>> ConsulterAbsencesAsync(
+            DateTime debut,
+            DateTime fin)
         {
             return await _context.LignesAppel
                 .Include(l => l.Etudiant)
                 .Include(l => l.Appel)
-                .ThenInclude(a => a.Seance)
+                    .ThenInclude(a => a.Seance)
                 .Where(l =>
                     l.Statut != StatutPresence.Present &&
                     l.Appel.Seance.Date >= debut &&

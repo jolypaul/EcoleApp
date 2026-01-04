@@ -22,7 +22,7 @@ namespace EcoleApp.Services
             string nom,
             string email,
             string motDePasse,
-            int roleId,
+            string roleId,
             string adminId)
         {
             if (await _context.Utilisateurs.AnyAsync(u => u.Email == email))
@@ -48,7 +48,7 @@ namespace EcoleApp.Services
         }
         public async Task ChangerRoleAsync(
     string utilisateurId,
-    int nouveauRoleId,
+    string nouveauRoleId,
     string adminId)
         {
             var utilisateur = await _context.Utilisateurs
@@ -66,11 +66,9 @@ namespace EcoleApp.Services
             await _auditService.LogAsync(
                 adminId,
                 "Modification rôle",
-                $"Utilisateur {utilisateur.Email} : {ancienRole} → RoleId {nouveauRoleId}"
+                $"Utilisateur {utilisateur.Email} : {ancienRole}  RoleId {nouveauRoleId}"
             );
         }
-
-
 
     }
 }

@@ -1,0 +1,47 @@
+﻿@model EcoleApp.ViewModels.Seance.CreateSeanceViewModel
+
+<h2>Créer une séance</h2>
+
+<form asp-action="Create" method="post" class="mt-3">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="CoursId" class="form-label"></label>
+        <input asp-for="CoursId" class="form-control" />
+        <span asp-validation-for="CoursId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="GroupeId" class="form-label"></label>
+        <input asp-for="GroupeId" class="form-control" />
+        <span asp-validation-for="GroupeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label"></label>
+        <input asp-for="Date" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Salle" class="form-label"></label>
+        <input asp-for="Salle" class="form-control" />
+        <span asp-validation-for="Salle" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <input asp-for="Type" class="form-control" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+         Enregistrer
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

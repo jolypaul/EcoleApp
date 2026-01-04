@@ -7,8 +7,8 @@ namespace EcoleApp.Models.Entity.SeanceDeCours
         public int Id { get; set; }
         public string Nom { get; set; } = string.Empty;
 
-        public int EnseignantId { get; set; }
-        public Enseignant? Enseignant { get; set; }
+        public string EnseignantId { get; set; } = string.Empty;
+        public Enseignant Enseignant { get; set; } = null!;
 
         public string Semestre { get; set; } = string.Empty;
         public int Annee { get; set; }

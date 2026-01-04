@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Administration";
+}
+
+<h2 class="mb-4">Administration</h2>
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body text-center">
+                <h5>Utilisateurs</h5>
+                <p>Créer un nouvel utilisateur</p>
+                <a asp-action="CreateUser" class="btn btn-primary">
+                    + Créer utilisateur
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body text-center">
+                <h5>Rôles</h5>
+                <p>Modifier les rôles</p>
+                <a asp-action="ChangeRole" class="btn btn-warning">
+                     Modifier rôle
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body text-center">
+                <h5>Audit</h5>
+                <p>Journal des actions</p>
+                <a asp-controller="Audit" asp-action="Index" class="btn btn-secondary">
+                     Audit
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,48 @@
+@model IEnumerable<EcoleApp.Models.Entity.Auth.Session>
+
+@{
+    ViewData["Title"] = "Connexions";
+}
+
+<h2>Connexions actives</h2>
+
+<a asp-action="Dashboard" class="btn btn-link mb-3">? Retour</a>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Aucune session active.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>SessionId</th>
+                <th>Utilisateur</th>
+                <th>Début</th>
+                <th>IP</th>
+                <th>UserAgent</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.SessionId</td>
+                    <td>@s.UtilisateurId</td>
+                    <td>@s.StartTime.ToLocalTime()</td>
+                    <td>@s.RemoteIp</td>
+                    <td>@s.UserAgent</td>
+                    <td>
+                        <form asp-action="TerminateSession" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sessionId" value="@s.SessionId" />
+                            <button class="btn btn-sm btn-danger">Forcer déconnexion</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

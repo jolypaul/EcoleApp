@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EcoleApp.Migrations
 {
     /// <inheritdoc />
@@ -69,8 +71,8 @@ namespace EcoleApp.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     NomRole = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Responsabilite = table.Column<string>(type: "longtext", nullable: false)
@@ -92,9 +94,10 @@ namespace EcoleApp.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    MotDePasse = table.Column<string>(type: "longtext", nullable: false)
+                    MotDePasseHash = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Discriminator = table.Column<string>(type: "varchar(13)", maxLength: 13, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Poste = table.Column<string>(type: "longtext", nullable: true)
@@ -107,7 +110,8 @@ namespace EcoleApp.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Niveau = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GroupeId = table.Column<int>(type: "int", nullable: true)
+                    GroupeId = table.Column<int>(type: "int", nullable: true),
+                    Actif = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -116,7 +120,8 @@ namespace EcoleApp.Migrations
                         name: "FK_Utilisateurs_Groupes_GroupeId",
                         column: x => x.GroupeId,
                         principalTable: "Groupes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Utilisateurs_Roles_RoleId",
                         column: x => x.RoleId,
@@ -132,8 +137,7 @@ namespace EcoleApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UtilisateurId = table.Column<int>(type: "int", nullable: false),
-                    UtilisateurId1 = table.Column<string>(type: "varchar(255)", nullable: true)
+                    UtilisateurId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Action = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -145,10 +149,11 @@ namespace EcoleApp.Migrations
                 {
                     table.PrimaryKey("PK_AuditLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AuditLogs_Utilisateurs_UtilisateurId1",
-                        column: x => x.UtilisateurId1,
+                        name: "FK_AuditLogs_Utilisateurs_UtilisateurId",
+                        column: x => x.UtilisateurId,
                         principalTable: "Utilisateurs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -160,8 +165,7 @@ namespace EcoleApp.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Nom = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EnseignantId = table.Column<int>(type: "int", nullable: false),
-                    EnseignantId1 = table.Column<string>(type: "varchar(255)", nullable: true)
+                    EnseignantId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Semestre = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -172,10 +176,11 @@ namespace EcoleApp.Migrations
                 {
                     table.PrimaryKey("PK_Cours", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cours_Utilisateurs_EnseignantId1",
-                        column: x => x.EnseignantId1,
+                        name: "FK_Cours_Utilisateurs_EnseignantId",
+                        column: x => x.EnseignantId,
                         principalTable: "Utilisateurs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -185,8 +190,7 @@ namespace EcoleApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    EtudiantId = table.Column<int>(type: "int", nullable: false),
-                    EtudiantId1 = table.Column<string>(type: "varchar(255)", nullable: true)
+                    EtudiantId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     FichierUrl = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -198,10 +202,11 @@ namespace EcoleApp.Migrations
                 {
                     table.PrimaryKey("PK_Justificatifs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Justificatifs_Utilisateurs_EtudiantId1",
-                        column: x => x.EtudiantId1,
+                        name: "FK_Justificatifs_Utilisateurs_EtudiantId",
+                        column: x => x.EtudiantId,
                         principalTable: "Utilisateurs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -211,8 +216,7 @@ namespace EcoleApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UtilisateurId = table.Column<int>(type: "int", nullable: false),
-                    UtilisateurId1 = table.Column<string>(type: "varchar(255)", nullable: true)
+                    UtilisateurId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Message = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -223,10 +227,11 @@ namespace EcoleApp.Migrations
                 {
                     table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Utilisateurs_UtilisateurId1",
-                        column: x => x.UtilisateurId1,
+                        name: "FK_Notifications_Utilisateurs_UtilisateurId",
+                        column: x => x.UtilisateurId,
                         principalTable: "Utilisateurs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -238,13 +243,13 @@ namespace EcoleApp.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CoursId = table.Column<int>(type: "int", nullable: false),
                     GroupeId = table.Column<int>(type: "int", nullable: false),
+                    EstValidee = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Salle = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Type = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ValideEnseignant = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ValideDelegue = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    Etat = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -259,6 +264,36 @@ namespace EcoleApp.Migrations
                         name: "FK_Seances_Groupes_GroupeId",
                         column: x => x.GroupeId,
                         principalTable: "Groupes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Appels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SeanceId = table.Column<int>(type: "int", nullable: false),
+                    DelegueId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EstVerrouille = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DateSaisie = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appels_Seances_SeanceId",
+                        column: x => x.SeanceId,
+                        principalTable: "Seances",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appels_Utilisateurs_DelegueId",
+                        column: x => x.DelegueId,
+                        principalTable: "Utilisateurs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -305,10 +340,66 @@ namespace EcoleApp.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "LignesAppel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    AppelId = table.Column<int>(type: "int", nullable: false),
+                    EtudiantId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Statut = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LignesAppel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LignesAppel_Appels_AppelId",
+                        column: x => x.AppelId,
+                        principalTable: "Appels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LignesAppel_Utilisateurs_EtudiantId",
+                        column: x => x.EtudiantId,
+                        principalTable: "Utilisateurs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "NomRole", "Responsabilite" },
+                values: new object[,]
+                {
+                    { "1", "Admin", "Gestion complète du système" },
+                    { "2", "Enseignant", "Gestion des séances et présences" },
+                    { "3", "Etudiant", "Consultation des présences" },
+                    { "4", "Delegue", "Gestion des présences de la classe" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Utilisateurs",
+                columns: new[] { "Id", "Discriminator", "Email", "MotDePasseHash", "NomComplet", "Poste", "RoleId" },
+                values: new object[] { "ADMIN-001", "Admin", "admin@237.com", "R6XI0Zdf8OnPo6mjOE6SRQ==.d3Iv777gb6RvoVohWxSgoYZfAHEQs9l04lfFb2inNs8=", "Administrateur Principal", "Administrateur Système", "1" });
+
             migrationBuilder.CreateIndex(
-                name: "IX_AuditLogs_UtilisateurId1",
+                name: "IX_Appels_DelegueId",
+                table: "Appels",
+                column: "DelegueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appels_SeanceId",
+                table: "Appels",
+                column: "SeanceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_UtilisateurId",
                 table: "AuditLogs",
-                column: "UtilisateurId1");
+                column: "UtilisateurId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CahiersDeTexte_CoursId",
@@ -327,19 +418,29 @@ namespace EcoleApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cours_EnseignantId1",
+                name: "IX_Cours_EnseignantId",
                 table: "Cours",
-                column: "EnseignantId1");
+                column: "EnseignantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Justificatifs_EtudiantId1",
+                name: "IX_Justificatifs_EtudiantId",
                 table: "Justificatifs",
-                column: "EtudiantId1");
+                column: "EtudiantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UtilisateurId1",
+                name: "IX_LignesAppel_AppelId",
+                table: "LignesAppel",
+                column: "AppelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LignesAppel_EtudiantId",
+                table: "LignesAppel",
+                column: "EtudiantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UtilisateurId",
                 table: "Notifications",
-                column: "UtilisateurId1");
+                column: "UtilisateurId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Seances_CoursId",
@@ -375,6 +476,9 @@ namespace EcoleApp.Migrations
                 name: "Justificatifs");
 
             migrationBuilder.DropTable(
+                name: "LignesAppel");
+
+            migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
@@ -382,6 +486,9 @@ namespace EcoleApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Rapports");
+
+            migrationBuilder.DropTable(
+                name: "Appels");
 
             migrationBuilder.DropTable(
                 name: "Seances");

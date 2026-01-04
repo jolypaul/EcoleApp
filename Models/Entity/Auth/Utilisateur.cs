@@ -8,9 +8,10 @@
         public string Email { get; set; } = string.Empty;
         public string MotDePasseHash { get; set; } = string.Empty;
 
-
-        public int RoleId { get; set; }
+        public string RoleId { get; set; } = string.Empty;
         public Role? Role { get; set; }
-        public string IdentityUserId { get; set; } = string.Empty;
+
+        // Force user to change initial password on first login
+        public bool MustChangePassword { get; set; } = false;
     }
 }

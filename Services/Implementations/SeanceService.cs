@@ -3,6 +3,7 @@ using EcoleApp.Models.Entity.SeanceDeCours;
 using EcoleApp.Models.Enums;
 using EcoleApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using EcoleApp.Exceptions;
 
 namespace EcoleApp.Services.Implementations
 {

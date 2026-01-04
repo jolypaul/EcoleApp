@@ -16,17 +16,27 @@ namespace EcoleApp.Services
 
         public async Task<Utilisateur?> VerifierIdentiteAsync(string email, string motDePasse)
         {
-            var utilisateur = await _context.Utilisateurs
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Email == email);
+            try
+            {
+                var utilisateur = await _context.Utilisateurs
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Email == email);
 
-            if (utilisateur == null)
-                return null;
+                if (utilisateur == null)
+                    return null;
 
-            bool motDePasseValide =
-                PasswordHelper.VerifyPassword(motDePasse, utilisateur.MotDePasseHash);
+                bool motDePasseValide =
+                    PasswordHelper.VerifyPassword(motDePasse, utilisateur.MotDePasseHash);
 
-            return motDePasseValide ? utilisateur : null;
+                return motDePasseValide ? utilisateur : null;
+            }
+            catch (Exception ex)
+            {
+                // Log to console for diagnostics and rethrow a clear exception
+                Console.WriteLine($"AuthService error: {ex}");
+                throw new InvalidOperationException(
+                    "Erreur d'accès à la base de données. Assurez-vous que la base et les migrations existent.", ex);
+            }
         }
     }
 }

@@ -41,15 +41,13 @@ namespace EcoleApp.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UtilisateurId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UtilisateurId1")
+                    b.Property<string>("UtilisateurId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UtilisateurId1");
+                    b.HasIndex("UtilisateurId");
 
                     b.ToTable("AuditLogs");
                 });
@@ -77,11 +75,8 @@ namespace EcoleApp.Migrations
 
             modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Role", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("NomRole")
                         .IsRequired()
@@ -98,28 +93,56 @@ namespace EcoleApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = "1",
                             NomRole = "Admin",
                             Responsabilite = "Gestion complète du système"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = "2",
                             NomRole = "Enseignant",
                             Responsabilite = "Gestion des séances et présences"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = "3",
                             NomRole = "Etudiant",
                             Responsabilite = "Consultation des présences"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = "4",
                             NomRole = "Delegue",
                             Responsabilite = "Gestion des présences de la classe"
                         });
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Session", b =>
+                {
+                    b.Property<string>("SessionId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RemoteIp")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UtilisateurId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("SessionId");
+
+                    b.HasIndex("UtilisateurId");
+
+                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Utilisateur", b =>
@@ -136,16 +159,20 @@ namespace EcoleApp.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("MotDePasse")
+                    b.Property<string>("MotDePasseHash")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("NomComplet")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -156,6 +183,64 @@ namespace EcoleApp.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Utilisateur");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.GestionAppel.Appel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateSaisie")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DelegueId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("EstVerrouille")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("SeanceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DelegueId");
+
+                    b.HasIndex("SeanceId")
+                        .IsUnique();
+
+                    b.ToTable("Appels");
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.GestionAppel.LigneAppel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EtudiantId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Statut")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppelId");
+
+                    b.HasIndex("EtudiantId");
+
+                    b.ToTable("LignesAppel");
                 });
 
             modelBuilder.Entity("EcoleApp.Models.Entity.JustificationDesHeures.Justificatif", b =>
@@ -169,10 +254,8 @@ namespace EcoleApp.Migrations
                     b.Property<DateTime>("DateDepot")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("EtudiantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EtudiantId1")
+                    b.Property<string>("EtudiantId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("FichierUrl")
@@ -185,7 +268,7 @@ namespace EcoleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EtudiantId1");
+                    b.HasIndex("EtudiantId");
 
                     b.ToTable("Justificatifs");
                 });
@@ -208,15 +291,13 @@ namespace EcoleApp.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UtilisateurId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UtilisateurId1")
+                    b.Property<string>("UtilisateurId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UtilisateurId1");
+                    b.HasIndex("UtilisateurId");
 
                     b.ToTable("Notifications");
                 });
@@ -301,10 +382,8 @@ namespace EcoleApp.Migrations
                     b.Property<int>("Annee")
                         .HasColumnType("int");
 
-                    b.Property<int>("EnseignantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EnseignantId1")
+                    b.Property<string>("EnseignantId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Nom")
@@ -320,7 +399,7 @@ namespace EcoleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnseignantId1");
+                    b.HasIndex("EnseignantId");
 
                     b.ToTable("Cours");
                 });
@@ -356,6 +435,12 @@ namespace EcoleApp.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<bool>("EstValidee")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("Etat")
+                        .HasColumnType("int");
+
                     b.Property<int>("GroupeId")
                         .HasColumnType("int");
 
@@ -366,12 +451,6 @@ namespace EcoleApp.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("ValideDelegue")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("ValideEnseignant")
-                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -396,10 +475,11 @@ namespace EcoleApp.Migrations
                         new
                         {
                             Id = "ADMIN-001",
-                            Email = "admin@asp.com",
-                            MotDePasse = "BWawV55i2M4l1tSYbOykgyHH4qslJWo8Bxxg/R9smkI=",
+                            Email = "admin@237.com",
+                            MotDePasseHash = "+n//ic1KGURUKbebJgD9og==.JNzH0fQczqulV90tqsXXAEOCT6fdI4Jj7Ylgp3LBAqc=",
+                            MustChangePassword = false,
                             NomComplet = "Administrateur Principal",
-                            RoleId = 1,
+                            RoleId = "1",
                             Poste = "Administrateur Système"
                         });
                 });
@@ -439,13 +519,34 @@ namespace EcoleApp.Migrations
                     b.HasDiscriminator().HasValue("Etudiant");
                 });
 
+            modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Delegue", b =>
+                {
+                    b.HasBaseType("EcoleApp.Models.Entity.Auth.Etudiant");
+
+                    b.Property<bool>("Actif")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasDiscriminator().HasValue("Delegue");
+                });
+
             modelBuilder.Entity("EcoleApp.Models.Entity.AdministrationEtAudit.AuditLog", b =>
                 {
                     b.HasOne("EcoleApp.Models.Entity.Auth.Utilisateur", "Utilisateur")
                         .WithMany()
-                        .HasForeignKey("UtilisateurId1");
+                        .HasForeignKey("UtilisateurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Utilisateur");
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Session", b =>
+                {
+                    b.HasOne("EcoleApp.Models.Entity.Auth.Utilisateur", null)
+                        .WithMany()
+                        .HasForeignKey("UtilisateurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Utilisateur", b =>
@@ -459,11 +560,51 @@ namespace EcoleApp.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("EcoleApp.Models.Entity.GestionAppel.Appel", b =>
+                {
+                    b.HasOne("EcoleApp.Models.Entity.Auth.Delegue", "Delegue")
+                        .WithMany()
+                        .HasForeignKey("DelegueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcoleApp.Models.Entity.SeanceDeCours.Seance", "Seance")
+                        .WithOne("Appel")
+                        .HasForeignKey("EcoleApp.Models.Entity.GestionAppel.Appel", "SeanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Delegue");
+
+                    b.Navigation("Seance");
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.GestionAppel.LigneAppel", b =>
+                {
+                    b.HasOne("EcoleApp.Models.Entity.GestionAppel.Appel", "Appel")
+                        .WithMany("LignesAppel")
+                        .HasForeignKey("AppelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcoleApp.Models.Entity.Auth.Etudiant", "Etudiant")
+                        .WithMany()
+                        .HasForeignKey("EtudiantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appel");
+
+                    b.Navigation("Etudiant");
+                });
+
             modelBuilder.Entity("EcoleApp.Models.Entity.JustificationDesHeures.Justificatif", b =>
                 {
                     b.HasOne("EcoleApp.Models.Entity.Auth.Etudiant", "Etudiant")
                         .WithMany()
-                        .HasForeignKey("EtudiantId1");
+                        .HasForeignKey("EtudiantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Etudiant");
                 });
@@ -472,7 +613,9 @@ namespace EcoleApp.Migrations
                 {
                     b.HasOne("EcoleApp.Models.Entity.Auth.Utilisateur", "Utilisateur")
                         .WithMany()
-                        .HasForeignKey("UtilisateurId1");
+                        .HasForeignKey("UtilisateurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Utilisateur");
                 });
@@ -502,7 +645,9 @@ namespace EcoleApp.Migrations
                 {
                     b.HasOne("EcoleApp.Models.Entity.Auth.Enseignant", "Enseignant")
                         .WithMany()
-                        .HasForeignKey("EnseignantId1");
+                        .HasForeignKey("EnseignantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Enseignant");
                 });
@@ -528,14 +673,22 @@ namespace EcoleApp.Migrations
 
             modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Etudiant", b =>
                 {
-                    b.HasOne("EcoleApp.Models.Entity.SeanceDeCours.Groupe", null)
+                    b.HasOne("EcoleApp.Models.Entity.SeanceDeCours.Groupe", "Groupe")
                         .WithMany("Etudiants")
-                        .HasForeignKey("GroupeId");
+                        .HasForeignKey("GroupeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Groupe");
                 });
 
             modelBuilder.Entity("EcoleApp.Models.Entity.Auth.Role", b =>
                 {
                     b.Navigation("Utilisateurs");
+                });
+
+            modelBuilder.Entity("EcoleApp.Models.Entity.GestionAppel.Appel", b =>
+                {
+                    b.Navigation("LignesAppel");
                 });
 
             modelBuilder.Entity("EcoleApp.Models.Entity.SeanceDeCours.Groupe", b =>
@@ -545,6 +698,8 @@ namespace EcoleApp.Migrations
 
             modelBuilder.Entity("EcoleApp.Models.Entity.SeanceDeCours.Seance", b =>
                 {
+                    b.Navigation("Appel");
+
                     b.Navigation("CahierDeTexte");
                 });
 #pragma warning restore 612, 618

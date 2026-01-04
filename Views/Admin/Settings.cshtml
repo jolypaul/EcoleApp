@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Paramètres";
+}
+
+<h2>Paramètres du système (placeholder)</h2>
+
+<a asp-action="Dashboard" class="btn btn-link mb-3">? Retour</a>
+
+<form asp-action="Settings" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Nom de l'établissement</label>
+        <input name="Etablissement" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Période académique</label>
+        <input name="Periode" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>

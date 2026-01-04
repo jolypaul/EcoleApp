@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Responsable";
+}
+
+<h2 class="mb-4">Responsable pédagogique</h2>
+
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <h5>Absences & retards</h5>
+                <p>Consulter les présences</p>
+                <a asp-controller="LigneAppel" asp-action="Index"
+                   class="btn btn-primary">
+                     Consulter
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <h5>Audit</h5>
+                <p>Historique des actions</p>
+                <a asp-controller="Audit" asp-action="Index"
+                   class="btn btn-secondary">
+                     Audit
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

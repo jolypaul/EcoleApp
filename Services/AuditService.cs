@@ -117,10 +117,11 @@ namespace EcoleApp.Services
                     page.Margin(20);
 
                     page.Header()
+                        .AlignCenter()
                         .Text("Journal d'audit")
                         .FontSize(18)
-                        .Bold()
-                        .AlignCenter();
+                        .Bold();
+
 
                     page.Content().Table(table =>
                     {
