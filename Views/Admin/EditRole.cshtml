@@ -1,25 +1,35 @@
 @model EcoleApp.Models.Entity.Auth.Role
 
-<h2>Modifier rôle</h2>
+@{
+    ViewData["Title"] = "Modifier un rôle";
+}
 
-<a asp-action="Roles" class="btn btn-link mb-3">? Retour</a>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<form asp-action="EditRole" method="post">
-    @Html.AntiForgeryToken()
+<div class="card shadow-sm">
+    <div class="card-body">
 
-    <div class="mb-3">
-        <label asp-for="NomRole" class="form-label"></label>
-        <input asp-for="NomRole" class="form-control" />
-        <span asp-validation-for="NomRole" class="text-danger"></span>
+        <form asp-action="EditRole" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="NomRole" class="form-label"></label>
+                <input asp-for="NomRole" class="form-control" />
+                <span asp-validation-for="NomRole" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Responsabilite" class="form-label"></label>
+                <textarea asp-for="Responsabilite" class="form-control"></textarea>
+                <span asp-validation-for="Responsabilite" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <button class="btn btn-primary">
+                Enregistrer
+            </button>
+        </form>
+
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Responsabilite" class="form-label"></label>
-        <textarea asp-for="Responsabilite" class="form-control"></textarea>
-        <span asp-validation-for="Responsabilite" class="text-danger"></span>
-    </div>
-
-    <input type="hidden" asp-for="Id" />
-
-    <button class="btn btn-primary">Enregistrer</button>
-</form>
+</div>

@@ -1,27 +1,26 @@
 @{
-    ViewData["Title"] = "Importer étudiants";
+    ViewData["Title"] = "Importer des étudiants";
 }
 
-<h2>Importer étudiants</h2>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<a asp-action="Dashboard" class="btn btn-link mb-3">? Retour</a>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+        <form asp-action="Import" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
 
-@if (TempData["Errors"] != null)
-{
-    <div class="alert alert-danger">@TempData["Errors"]</div>
-}
+            <div class="mb-3">
+                <label class="form-label">
+                    Fichier Excel (.xlsx) : Matricule, NomComplet, Email, Filiere, Niveau, Groupe
+                </label>
+                <input type="file" name="file" class="form-control" accept=".xlsx" />
+            </div>
 
-<form asp-action="Import" method="post" enctype="multipart/form-data">
-    @Html.AntiForgeryToken()
-    <div class="mb-3">
-        <label>Fichier Excel (.xlsx) contenant : Matricule, NomComplet, Email, Filiere, Niveau, Groupe</label>
-        <input type="file" name="file" class="form-control" accept=".xlsx" />
+            <button class="btn btn-primary">
+                Importer
+            </button>
+        </form>
+
     </div>
-
-    <button class="btn btn-primary">Importer</button>
-</form>
+</div>

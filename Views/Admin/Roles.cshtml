@@ -1,29 +1,41 @@
 @model IEnumerable<EcoleApp.Models.Entity.Auth.Role>
 
-<h2>Rôles</h2>
+@{
+    ViewData["Title"] = "Gestion des rôles";
+}
 
-<a asp-action="Dashboard" class="btn btn-link mb-3">? Retour</a>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>Responsabilité</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var r in Model)
-        {
-            <tr>
-                <td>@r.Id</td>
-                <td>@r.NomRole</td>
-                <td>@r.Responsabilite</td>
-                <td>
-                    <a asp-action="EditRole" asp-route-id="@r.Id" class="btn btn-sm btn-primary">Modifier</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Responsabilité</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.Id</td>
+                        <td>@r.NomRole</td>
+                        <td>@r.Responsabilite</td>
+                        <td>
+                            <a asp-action="EditRole"
+                               asp-route-id="@r.Id"
+                               class="btn btn-sm btn-primary">
+                                Modifier
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

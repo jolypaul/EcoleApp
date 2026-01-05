@@ -1,57 +1,66 @@
 ﻿using EcoleApp.Models.DAL;
 using EcoleApp.Models.Entity.Auth;
 using EcoleApp.Services;
+using EcoleApp.Utilitaires; 
 using EcoleApp.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 
 namespace EcoleApp.Controllers
 {
-    [Authorize(Roles = "Admin,Responsable")]
+    [Authorize(Roles = Roles.Administrateur + "," + Roles.Responsable)]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _db;
         private readonly AdminService _adminService;
         private readonly AuditService _auditService;
         private readonly ImportService _importService;
 
         public AdminController(
-            ApplicationDbContext context,
+            ApplicationDbContext db,
             AdminService adminService,
             AuditService auditService,
             ImportService importService)
         {
-            _context = context;
+            _db = db;
             _adminService = adminService;
             _auditService = auditService;
             _importService = importService;
         }
 
+        // =========================
+        // DASHBOARD
+        // =========================
         public IActionResult Dashboard()
         {
             return View();
         }
 
+        // =========================
+        // CREATE USER (UC1)
+        // =========================
+        [Authorize(Roles = Roles.Administrateur)]
+        [HttpGet]
         public IActionResult CreateUser()
         {
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "NomRole");
+            ChargerRoles();
             return View();
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser(CreateUserViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Roles = new SelectList(_context.Roles, "Id", "NomRole");
+                ChargerRoles();
                 return View(model);
             }
 
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId")?.Value ?? string.Empty;
+            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             try
             {
@@ -60,58 +69,63 @@ namespace EcoleApp.Controllers
                     model.Email,
                     model.MotDePasse,
                     model.RoleId,
-                    adminId
-                );
+                    adminId);
 
-                TempData["Success"] = "Utilisateur créé avec succès";
+                await _auditService.LogAsync(
+                    adminId,
+                    "Création utilisateur",
+                    $"Utilisateur {model.Email} créé");
+
+                TempData["Success"] = "Utilisateur créé avec succès.";
                 return RedirectToAction(nameof(CreateUser));
             }
             catch (Exception ex)
             {
-                // Handle business errors (email exists, etc.)
                 ModelState.AddModelError(string.Empty, ex.Message);
-                ViewBag.Roles = new SelectList(_context.Roles, "Id", "NomRole");
+                ChargerRoles();
                 return View(model);
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        // =========================
+        // CHANGE ROLE (UC2)
+        // =========================
+        [Authorize(Roles = Roles.Administrateur)]
+        [HttpGet]
         public IActionResult ChangeRole()
         {
-            ViewBag.Utilisateurs = new SelectList(
-                _context.Utilisateurs, "Id", "Email");
-
-            ViewBag.Roles = new SelectList(
-                _context.Roles, "Id", "NomRole");
-
+            ViewBag.Utilisateurs =
+                new SelectList(_db.Utilisateurs, "Id", "Email");
+            ChargerRoles();
             return View();
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeRole(ChangeRoleViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Utilisateurs = new SelectList(
-                    _context.Utilisateurs, "Id", "Email");
-
-                ViewBag.Roles = new SelectList(
-                    _context.Roles, "Id", "NomRole");
-
+                ViewBag.Utilisateurs =
+                    new SelectList(_db.Utilisateurs, "Id", "Email");
+                ChargerRoles();
                 return View(model);
             }
 
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId")?.Value ?? string.Empty;
+            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             try
             {
                 await _adminService.ChangerRoleAsync(
                     model.UtilisateurId,
                     model.NouveauRoleId,
-                    adminId
-                );
+                    adminId);
+
+                await _auditService.LogAsync(
+                    adminId,
+                    "Changement rôle",
+                    $"Rôle modifié pour l'utilisateur {model.UtilisateurId}");
 
                 TempData["Success"] = "Rôle modifié avec succès.";
                 return RedirectToAction(nameof(ChangeRole));
@@ -119,37 +133,37 @@ namespace EcoleApp.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                ViewBag.Utilisateurs = new SelectList(
-                    _context.Utilisateurs, "Id", "Email");
-
-                ViewBag.Roles = new SelectList(
-                    _context.Roles, "Id", "NomRole");
-
+                ViewBag.Utilisateurs =
+                    new SelectList(_db.Utilisateurs, "Id", "Email");
+                ChargerRoles();
                 return View(model);
             }
         }
 
-        // ======================
-        // Roles management (UC5)
-        // ======================
-        public IActionResult Roles()
+        // =========================
+        // ROLES MANAGEMENT (UC5)
+        // =========================
+        [Authorize(Roles = Roles.Administrateur)]
+        public IActionResult ManageRoles() // ✅ renommé
         {
-            var roles = _context.Roles.ToList();
-            return View(roles);
+            return View(_db.Roles.ToList());
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
+        [HttpGet]
         public IActionResult EditRole(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return NotFound();
 
-            var role = _context.Roles.Find(id);
+            var role = _db.Roles.Find(id);
             if (role == null)
                 return NotFound();
 
             return View(role);
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditRole(Role model)
@@ -157,45 +171,30 @@ namespace EcoleApp.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var role = _context.Roles.Find(model.Id);
+            var role = _db.Roles.Find(model.Id);
             if (role == null)
                 return NotFound();
 
             role.NomRole = model.NomRole;
             role.Responsabilite = model.Responsabilite;
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-            await _auditService.LogAsync(adminId, "Modification rôle", $"Rôle {role.NomRole} mis à jour.");
+            await _auditService.LogAsync(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                "Modification rôle",
+                $"Rôle {role.NomRole} modifié");
 
             TempData["Success"] = "Rôle mis à jour.";
-            return RedirectToAction(nameof(Roles));
+            return RedirectToAction(nameof(ManageRoles));
         }
 
-        // ======================
-        // Settings (UC3) - placeholder
-        // ======================
-        public IActionResult Settings()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Settings(IFormCollection form)
-        {
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-            await _auditService.LogAsync(adminId, "Modification paramètres", "Paramètres système modifiés (via interface)." );
-            TempData["Success"] = "Paramètres sauvegardés (placeholder).";
-            return RedirectToAction(nameof(Settings));
-        }
-
-        // ======================
-        // Connections monitoring (UC8) - placeholder
-        // ======================
+        // =========================
+        // CONNECTIONS MONITORING (UC8)
+        // =========================
+        [Authorize(Roles = Roles.Administrateur)]
         public IActionResult Connections()
         {
-            var sessions = _context.Sessions
+            var sessions = _db.Sessions
                 .Where(s => s.EndTime == null)
                 .OrderByDescending(s => s.StartTime)
                 .ToList();
@@ -203,6 +202,7 @@ namespace EcoleApp.Controllers
             return View(sessions);
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TerminateSession(string sessionId)
@@ -210,25 +210,33 @@ namespace EcoleApp.Controllers
             if (string.IsNullOrEmpty(sessionId))
                 return BadRequest();
 
-            var session = _context.Sessions.Find(sessionId);
+            var session = _db.Sessions.Find(sessionId);
             if (session == null)
                 return NotFound();
 
             session.EndTime = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-            await _auditService.LogAsync(adminId, "Forcer déconnexion", $"Session {sessionId} terminée.");
+            await _auditService.LogAsync(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                "Forcer déconnexion",
+                $"Session {sessionId} terminée");
 
             TempData["Success"] = "Session terminée.";
             return RedirectToAction(nameof(Connections));
         }
 
+        // =========================
+        // IMPORT ETUDIANTS
+        // =========================
+        [Authorize(Roles = Roles.Administrateur)]
+        [HttpGet]
         public IActionResult Import()
         {
             return View();
         }
 
+        [Authorize(Roles = Roles.Administrateur)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(IFormFile file)
@@ -240,16 +248,30 @@ namespace EcoleApp.Controllers
             }
 
             using var stream = file.OpenReadStream();
-            var (created, skipped, errors) = await _importService.ImportStudentsFromExcelAsync(stream);
+            var (created, skipped, errors) =
+                await _importService.ImportStudentsFromExcelAsync(stream);
 
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-            await _auditService.LogAsync(adminId, "Import étudiants", $"Créés: {created}, Ignorés: {skipped}");
+            await _auditService.LogAsync(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                "Import étudiants",
+                $"Créés: {created}, Ignorés: {skipped}");
 
-            TempData["Success"] = $"Import terminé. Créés: {created}. Ignorés: {skipped}.";
+            TempData["Success"] =
+                $"Import terminé. Créés: {created}. Ignorés: {skipped}.";
+
             if (errors.Any())
-                TempData["Errors"] = string.Join("; ", errors);
+                TempData["Errors"] = string.Join(" | ", errors);
 
             return RedirectToAction(nameof(Import));
+        }
+
+        // =========================
+        // OUTILS PRIVES
+        // =========================
+        private void ChargerRoles()
+        {
+            ViewBag.Roles =
+                new SelectList(_db.Roles, "Id", "NomRole");
         }
     }
 }

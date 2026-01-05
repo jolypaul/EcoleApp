@@ -1,45 +1,44 @@
 ﻿@model EcoleApp.ViewModels.Admin.ChangeRoleViewModel
 
 @{
-    ViewData["Title"] = "Modifier rôle";
+    ViewData["Title"] = "Modifier un rôle utilisateur";
 }
 
-<h2>Attribuer / Modifier un rôle</h2>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<a asp-action="Dashboard" class="btn btn-link mb-3">← Retour</a>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+        <form asp-action="ChangeRole" method="post">
+            @Html.AntiForgeryToken()
 
-<form asp-action="ChangeRole" method="post">
-    @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3">
+                <label asp-for="UtilisateurId" class="form-label">Utilisateur</label>
+                <select asp-for="UtilisateurId"
+                        asp-items="ViewBag.Utilisateurs"
+                        class="form-select">
+                </select>
+                <span asp-validation-for="UtilisateurId" class="text-danger"></span>
+            </div>
 
-    <div class="form-group">
-        <label>Utilisateur</label>
-        <select asp-for="UtilisateurId"
-                asp-items="ViewBag.Utilisateurs"
-                class="form-control">
-        </select>
-        <span asp-validation-for="UtilisateurId" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="NouveauRoleId" class="form-label">Nouveau rôle</label>
+                <select asp-for="NouveauRoleId"
+                        asp-items="ViewBag.Roles"
+                        class="form-select">
+                </select>
+                <span asp-validation-for="NouveauRoleId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-warning">
+                <i class="fa fa-user-shield me-1"></i> Mettre à jour
+            </button>
+        </form>
+
     </div>
-
-    <div class="form-group mt-3">
-        <label>Nouveau rôle</label>
-        <select asp-for="NouveauRoleId"
-                asp-items="ViewBag.Roles"
-                class="form-control">
-        </select>
-        <span asp-validation-for="NouveauRoleId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-warning mt-4">
-        Mettre à jour le rôle
-    </button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

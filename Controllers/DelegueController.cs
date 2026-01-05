@@ -2,7 +2,6 @@ using EcoleApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcoleApp.Controllers
 {
@@ -16,17 +15,26 @@ namespace EcoleApp.Controllers
             _seanceService = seanceService;
         }
 
+        // =========================
+        // DASHBOARD DELEGUE
+        // =========================
         public async Task<IActionResult> Dashboard()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            var delegueId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(delegueId))
+                return Unauthorized();
 
-            var seances = await _seanceService.ConsulterSeancesAsync(userId);
+            var seances = await _seanceService
+                .ConsulterSeancesAsync(delegueId);
 
-            // show only seances where user is student/delegate (group member)
-            var mySeances = seances.Where(s => s.Groupe != null && s.Groupe.Etudiants != null && s.Groupe.Etudiants.Any(e => e.Id == userId))
-                                   .OrderByDescending(s => s.Date)
-                                   .ToList();
+            // Séances du groupe du délégué
+            var mySeances = seances
+                .Where(s =>
+                    s.Groupe != null &&
+                    s.Groupe.Etudiants != null &&
+                    s.Groupe.Etudiants.Any(e => e.Id == delegueId))
+                .OrderByDescending(s => s.Date)
+                .ToList();
 
             return View(mySeances);
         }

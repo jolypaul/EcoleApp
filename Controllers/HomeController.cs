@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using EcoleApp.Models;
+using EcoleApp.Models.Entity.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcoleApp.Controllers
@@ -8,18 +7,19 @@ namespace EcoleApp.Controllers
     {
         public IActionResult Index()
         {
-            return View();
-        }
+            if (!User.Identity!.IsAuthenticated)
+                return View();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            if (User.IsInRole(Roles.Admin))
+                return RedirectToAction("Dashboard", "Admin");
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (User.IsInRole(Roles.Enseignant))
+                return RedirectToAction("Dashboard", "Responsable");
+
+            if (User.IsInRole(Roles.Delegue))
+                return RedirectToAction("Dashboard", "Delegue");
+
+            return View();
         }
     }
 }

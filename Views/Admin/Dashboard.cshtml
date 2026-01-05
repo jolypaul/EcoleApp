@@ -2,41 +2,41 @@
     ViewData["Title"] = "Administration";
 }
 
-<h2 class="mb-4">Administration</h2>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<div class="row">
+<div class="row g-3">
 
     <div class="col-md-4">
-        <div class="card shadow mb-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body text-center">
                 <h5>Utilisateurs</h5>
-                <p>Créer un nouvel utilisateur</p>
+                <p>Créer et gérer les utilisateurs</p>
                 <a asp-action="CreateUser" class="btn btn-primary">
-                    + Créer utilisateur
+                    Créer utilisateur
                 </a>
             </div>
         </div>
     </div>
 
     <div class="col-md-4">
-        <div class="card shadow mb-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body text-center">
                 <h5>Rôles</h5>
-                <p>Modifier les rôles</p>
+                <p>Attribution et modification</p>
                 <a asp-action="ChangeRole" class="btn btn-warning">
-                     Modifier rôle
+                    Modifier rôles
                 </a>
             </div>
         </div>
     </div>
 
     <div class="col-md-4">
-        <div class="card shadow mb-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body text-center">
                 <h5>Audit</h5>
-                <p>Journal des actions</p>
+                <p>Historique des actions</p>
                 <a asp-controller="Audit" asp-action="Index" class="btn btn-secondary">
-                     Audit
+                    Audit
                 </a>
             </div>
         </div>

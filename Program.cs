@@ -207,12 +207,11 @@ app.UseAuthorization();
 // session validation middleware (must be after auth)
 app.UseMiddleware<SessionValidationMiddleware>();
 
-app.UseAuthorization();
-
 //  Route par défaut MVC
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 
 app.Run();

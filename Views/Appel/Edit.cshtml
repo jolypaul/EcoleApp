@@ -1,44 +1,58 @@
 ﻿@model EcoleApp.ViewModels.Appel.SaisieAppelViewModel
 @using EcoleApp.Models.Enums
 
-<h2>Prise d’appel</h2>
+@{
+    ViewData["Title"] = "Prise d’appel";
+}
 
-<a asp-controller="Seance" asp-action="Index" class="btn btn-link mb-3">← Retour aux séances</a>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="AppelId" />
+<div class="card shadow-sm">
+    <div class="card-body">
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Étudiant</th>
-                <th>Présence</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Presences)
-            {
-                var id = item.Key;
-                var value = item.Value;
-                <tr>
-                    <td>@(Model.StudentNames.ContainsKey(id) ? Model.StudentNames[id] : id)</td>
-                    <td>
-                        <select name="presences[@id]" class="form-select">
-                            @foreach (StatutPresence statut in Enum.GetValues(typeof(StatutPresence)))
-                            {
-                                <option value="@((int)statut)" selected="@(value == statut ? "selected" : null)">
-                                    @statut
-                                </option>
-                            }
-                        </select>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="AppelId" />
 
-    <button type="submit" class="btn btn-success">
-        Enregistrer l’appel
-    </button>
-</form>
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Étudiant</th>
+                        <th>Présence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Presences)
+                    {
+                        var id = item.Key;
+                        var value = item.Value;
+
+                        <tr>
+                            <td>
+                                @(Model.StudentNames.ContainsKey(id)
+                                                            ? Model.StudentNames[id]
+                                                            : id)
+                            </td>
+                            <td>
+                                <select name="presences[@id]" class="form-select">
+                                    @foreach (StatutPresence statut in Enum.GetValues(typeof(StatutPresence)))
+                                    {
+                                        <option value="@((int)statut)"
+                                                selected="@(value == statut ? "selected" : null)">
+                                            @statut
+                                        </option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-save me-1"></i> Enregistrer l’appel
+            </button>
+        </form>
+
+    </div>
+</div>

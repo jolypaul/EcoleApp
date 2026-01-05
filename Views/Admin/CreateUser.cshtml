@@ -4,47 +4,47 @@
     ViewData["Title"] = "Créer un utilisateur";
 }
 
-<h2>Créer un utilisateur</h2>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-<a asp-action="Dashboard" class="btn btn-link mb-3">← Retour</a>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+        <form asp-action="CreateUser" method="post">
+            @Html.AntiForgeryToken()
 
-<form asp-action="CreateUser" method="post">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="form-group">
-        <label>Nom complet</label>
-        <input asp-for="Nom" class="form-control" />
-        <span asp-validation-for="Nom" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Nom" class="form-label"></label>
+                <input asp-for="Nom" class="form-control" />
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MotDePasse" class="form-label"></label>
+                <input asp-for="MotDePasse" type="password" class="form-control" />
+                <span asp-validation-for="MotDePasse" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RoleId" class="form-label"></label>
+                <select asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select"></select>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
+            </div>
+
+            <button class="btn btn-primary">
+                <i class="fa fa-user-plus me-1"></i> Créer
+            </button>
+        </form>
+
     </div>
-
-    <div class="form-group">
-        <label>Email</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label>Mot de passe</label>
-        <input asp-for="MotDePasse" class="form-control" />
-        <span asp-validation-for="MotDePasse" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label>Rôle</label>
-        <select asp-for="RoleId" asp-items="ViewBag.Roles" class="form-control"></select>
-        <span asp-validation-for="RoleId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">
-        Créer l’utilisateur
-    </button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

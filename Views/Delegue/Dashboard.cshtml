@@ -1,53 +1,65 @@
 ﻿@model IEnumerable<EcoleApp.Models.Entity.SeanceDeCours.Seance>
 
 @{
-    ViewData["Title"] = "Délégué";
+    ViewData["Title"] = "Dashboard Délégué";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Délégué de classe</h2>
-        <a asp-controller="Seance" asp-action="Index" class="btn btn-outline-secondary">Voir toutes les séances</a>
-    </div>
+<h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
-    <div class="card shadow">
-        <div class="card-body">
-            <h5 class="card-title">Mes prochaines séances</h5>
-            <p class="card-text text-muted">Séances de votre groupe où vous pouvez prendre l'appel.</p>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-            @if (!Model.Any())
-            {
-                <div class="alert alert-info">Aucune séance pour le moment.</div>
-            }
-            else
-            {
-                <table class="table table-hover align-middle">
-                    <thead>
+        <h5 class="card-title">Séances à venir</h5>
+        <p class="text-muted">
+            Vous pouvez effectuer l’appel pour les séances de votre groupe.
+        </p>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Aucune séance disponible.
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Cours</th>
+                        <th>Groupe</th>
+                        <th>Salle</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
                         <tr>
-                            <th style="width:150px">Date</th>
-                            <th>Cours</th>
-                            <th style="width:160px">Groupe</th>
-                            <th style="width:120px">Salle</th>
-                            <th style="width:140px">Action</th>
+                            <td>@s.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@s.Cours?.Nom</td>
+                            <td>@s.Groupe?.Nom</td>
+                            <td>@s.Salle</td>
+                            <td class="text-center">
+                                <a asp-controller="Appel"
+                                   asp-action="Creer"
+                                   asp-route-seanceId="@s.Id"
+                                   class="btn btn-sm btn-primary me-2">
+                                    Faire l’appel
+                                </a>
+
+                                <a asp-controller="Seance"
+                                   asp-action="Details"
+                                   asp-route-id="@s.Id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    Détails
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var s in Model)
-                        {
-                            <tr>
-                                <td>@s.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>@s.Cours?.Nom</td>
-                                <td>@s.Groupe?.Nom</td>
-                                <td>@s.Salle</td>
-                                <td>
-                                    <a asp-controller="Appel" asp-action="Creer" asp-route-seanceId="@s.Id" class="btn btn-sm btn-primary me-2">Faire l'appel</a>
-                                    <a asp-controller="Seance" asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-outline-secondary">Détails</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
+                    }
+                </tbody>
+            </table>
+        }
+
     </div>
 </div>

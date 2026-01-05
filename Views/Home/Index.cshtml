@@ -1,19 +1,45 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Accueil";
 }
 
-<div class="text-center">
-    <h1 class="display-4">EYENGA NTSAMA EST BEAU ET MIGNON</h1>
-    <p>Il faut bien commencer le projet de C# quelque part.</p>
-</div>
+<h2 class="fw-bold mb-4 text-center">
+    Système de Gestion Universitaire
+</h2>
 
-<div class="mt-4 text-center">
-    <h2 class="display-4">Bonjour C# Bonjour ASP.NET</h2>
+<div class="row text-center">
 
-    <!-- Bouton Authentification -->
-    <a asp-controller="Admin"
-       asp-action="CreateUser"
-       class="btn btn-primary btn-lg mt-3">
-        Authentification
-    </a>
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="fw-bold">Administration</h5>
+                <p>
+                    Gestion des utilisateurs, rôles, paramètres
+                    et journalisation.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="fw-bold">Responsables</h5>
+                <p>
+                    Supervision académique et suivi des activités.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="fw-bold">Délégués</h5>
+                <p>
+                    Présences, communications et rapports.
+                </p>
+            </div>
+        </div>
+    </div>
+
 </div>
